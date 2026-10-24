@@ -1,0 +1,800 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>متابعة دروس الباك</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Reem+Kufi:wght@500;700&display=swap">
+<style>
+/* Layout concept: a drafting sheet. Graph-paper ground, a title block (cartouche) for the totals,
+   and progress drawn as dimension lines with ticks every 10%. Square corners throughout. */
+:root{
+  --bg:#EDF2F7;
+  --grid:#DCE5EE;
+  --paper:#FBFCFE;
+  --tint:#E6EEF7;
+  --ink:#13233A;
+  --muted:#52647B;
+  --line:#BFCCDA;
+  --accent:#1D5DBE;
+  --accent-ink:#FFFFFF;
+  --ok:#17784C;
+  --f-display:'Reem Kufi','IBM Plex Sans Arabic',Tahoma,sans-serif;
+  --f-body:'IBM Plex Sans Arabic',Tahoma,'Segoe UI',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1C30;
+    --grid:#142A45;
+    --paper:#122641;
+    --tint:#183457;
+    --ink:#E4ECF7;
+    --muted:#95A9C2;
+    --line:#2D4A6D;
+    --accent:#6BB0FF;
+    --accent-ink:#0D1C30;
+    --ok:#5ED79A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1C30;
+  --grid:#142A45;
+  --paper:#122641;
+  --tint:#183457;
+  --ink:#E4ECF7;
+  --muted:#95A9C2;
+  --line:#2D4A6D;
+  --accent:#6BB0FF;
+  --accent-ink:#0D1C30;
+  --ok:#5ED79A;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{
+  background-color:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink);
+  font-family:var(--f-body);
+  font-size:16px;
+  line-height:1.6;
+  padding-block:20px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+.wrap{max-width:1040px;margin-inline:auto}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{direction:ltr;unicode-bidi:isolate;display:inline-block;font-variant-numeric:tabular-nums}
+
+/* header */
+.eyebrow{margin:0;font-size:13px;letter-spacing:.06em;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(32px,8vw,52px);line-height:1.15;margin:4px 0 10px;text-wrap:balance}
+.by{margin:-4px 0 12px;font-size:14px;font-weight:500;color:var(--accent)}
+.lead{margin:0 0 18px;max-width:60ch;color:var(--muted)}
+
+.tb{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5px;background:var(--ink);border:1.5px solid var(--ink)}
+@media (min-width:640px){.tb{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.tb-c{background:var(--paper);padding:10px 14px;display:flex;flex-direction:column;min-width:0}
+.tb-c .k{font-size:12px;color:var(--muted);letter-spacing:.04em}
+.tb-c .v{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1.3}
+.tb-c .v.s{font-family:var(--f-body);font-weight:500;font-size:15px;line-height:2.2}
+.tb-dim{grid-column:1/-1;background:var(--paper);padding:10px 18px 8px}
+
+/* dimension line */
+.dim{position:relative;display:block;height:14px}
+.dim::before{content:"";position:absolute;inset-inline:0;top:50%;height:1px;background:var(--line)}
+.dim::after{content:"";position:absolute;inset-inline:0;top:2px;bottom:2px;border-inline:1px solid var(--line);background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 10%)}
+.dim .fill{position:absolute;z-index:1;inset-inline-start:0;top:50%;height:4px;margin-top:-2px;width:var(--p,0%);background:var(--accent);transition:width .3s ease}
+.dim i{position:absolute;z-index:2;top:50%;width:10px;height:10px;margin-top:-5px;inset-inline-start:calc(var(--p,0%) - 5px);background:var(--accent);transform:rotate(45deg);transition:inset-inline-start .3s ease}
+
+/* toolbar */
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 8px}
+.btn{font-size:14px;padding:7px 14px;border:1.5px solid var(--ink);background:var(--paper);cursor:pointer;line-height:1.5}
+.btn:hover{background:var(--tint)}
+.btn[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.panel{border:1.5px dashed var(--muted);background:var(--paper);padding:12px 14px;margin-bottom:8px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.panel p{margin:0;flex:1 1 240px;font-size:14px;color:var(--muted)}
+.panel .btn.danger{border-color:var(--ink)}
+.note{margin:6px 0 20px;font-size:13px;color:var(--muted);max-width:68ch}
+
+/* subject cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,430px),1fr));gap:16px;align-items:start}
+.card{background:var(--paper);border:1.5px solid var(--ink);min-width:0}
+.head{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:center;padding:14px 16px 12px;border:0;background:none;text-align:start;cursor:pointer}
+.head:hover{background:var(--tint)}
+.name{font-family:var(--f-display);font-weight:700;font-size:23px;line-height:1.3}
+.name::after{content:"";display:inline-block;width:7px;height:7px;border:solid var(--muted);border-width:0 2px 2px 0;transform:rotate(45deg);margin-inline-start:12px;margin-block-end:4px;transition:transform .2s}
+.head[aria-expanded="true"] .name::after{transform:rotate(-135deg);margin-block-end:-2px}
+.pct{font-family:var(--f-display);font-weight:700;font-size:24px}
+.sub{grid-column:1/-1;font-size:13px;color:var(--muted)}
+.head .dim{grid-column:1/-1;margin-top:6px}
+.body{padding:2px 16px 16px;border-top:1px solid var(--line)}
+
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 4px}
+.seg button{font-size:14px;padding:6px 12px;border:1.5px solid var(--ink);background:var(--paper);cursor:pointer}
+.seg button:hover{background:var(--tint)}
+.seg button[aria-checked="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.hint{margin:6px 0 0;font-size:12.5px;color:var(--muted)}
+.lbl{margin:0 0 4px;font-size:13px;color:var(--muted)}
+.streams{margin:0 0 18px}
+
+.cols{display:flex;justify-content:flex-end;padding-top:10px;font-size:11px;color:var(--muted)}
+.cols span{width:42px;text-align:center}
+.list{list-style:none;margin:0;padding:0}
+.row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.row:last-child{border-bottom:0}
+.t{flex:1;min-width:0;text-align:right;font-size:15px;line-height:1.5}
+.row.full .t{color:var(--ok)}
+.steps{display:flex}
+.chk{width:42px;height:40px;border:0;background:none;padding:0;cursor:pointer;position:relative}
+.chk::before{content:"";position:absolute;inset:0;margin:auto;width:24px;height:24px;border:1.5px solid var(--ink);background:var(--paper)}
+.chk:hover::before{background:var(--tint)}
+.chk[aria-checked="true"]::before{background:var(--accent);border-color:var(--accent)}
+.chk[aria-checked="true"]::after{content:"";position:absolute;left:50%;top:50%;width:6px;height:12px;border:solid var(--accent-ink);border-width:0 2px 2px 0;transform:translate(-50%,-62%) rotate(45deg)}
+
+/* edit mode */
+.rm{display:none;width:36px;height:36px;border:1.5px solid var(--ink);background:var(--paper);cursor:pointer;font-size:20px;line-height:1;align-items:center;justify-content:center}
+.rm:hover{background:var(--tint)}
+.add{display:none;gap:8px;margin-top:12px}
+.add input{flex:1;min-width:0;font-size:16px;padding:7px 10px;border:1.5px solid var(--ink);background:var(--bg)}
+.editing .rm{display:inline-flex}
+.editing .add{display:flex}
+.editing .steps,.editing .cols{display:none}
+
+@media (prefers-reduced-motion:reduce){
+  .dim .fill,.dim i,.name::after{transition:none}
+}
+</style>
+
+<div id="app" class="wrap" dir="rtl" lang="ar">
+  <header>
+    <p class="eyebrow" id="eyebrow">تقني رياضي · بكالوريا 2027</p>
+    <h1>متابعة دروس الباك</h1>
+    <p class="by">بمشاركة يانيس</p>
+    <p class="lead">لكل درس ثلاث خطوات: الدرس، التمارين، المراجعة. أشّر كل خطوة تخلصها وشوف نسبتك في كل مادة.</p>
+    <p class="lbl">اختر شعبتك</p>
+    <div class="seg streams" id="streams" role="radiogroup" aria-label="الشعبة"></div>
+
+    <div class="tb" role="group" aria-label="ملخص التقدم">
+      <div class="tb-c"><span class="k">التقدم الكلي</span><span class="v num" id="ov-pct">0%</span></div>
+      <div class="tb-c"><span class="k">دروس مكتملة</span><span class="v num" id="ov-full">0/0</span></div>
+      <div class="tb-c"><span class="k">خطوات منجزة</span><span class="v num" id="ov-steps">0/0</span></div>
+      <div class="tb-c"><span class="k">الحفظ</span><span class="v s" id="ov-save" aria-live="polite">محفوظ في هذا المتصفح</span></div>
+      <div class="tb-dim" id="ov-dim"></div>
+    </div>
+
+    <div class="bar">
+      <button type="button" class="btn" id="b-open">فتح كل المواد</button>
+      <button type="button" class="btn" id="b-close">طي كل المواد</button>
+      <button type="button" class="btn" id="b-edit" aria-pressed="false">تعديل القائمة</button>
+    </div>
+    <div class="panel" id="panel" hidden></div>
+    <p class="note">القوائم مبنية على منهاج السنة الثالثة ثانوي كما أعرفه، وقد تختلف قليلًا عن ترتيب أستاذك أو كتابك، خصوصًا في التكنولوجيا وعلوم الطبيعة والحياة. استعمل «تعديل القائمة» لحذف درس أو إضافة درس.</p>
+  </header>
+
+  <main class="grid" id="grid"></main>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var STEPS = ['الدرس', 'التمارين', 'المراجعة'];
+
+  var LIBRARY = [
+    { id: 'math', name: 'الرياضيات', items: [
+      'النهايات والاستمرارية',
+      'الاشتقاقية ودراسة الدوال',
+      'المتتاليات العددية',
+      'الدالة الأسية',
+      'الدالة اللوغاريتمية',
+      'الدوال الأصلية والحساب التكاملي',
+      'المعادلات التفاضلية',
+      'الأعداد المركبة: الشكل الجبري والمثلثي',
+      'الأعداد المركبة والتحويلات النقطية',
+      'الجداء السلمي والهندسة في الفضاء',
+      'القسمة في Z والموافقات',
+      'الاحتمالات: الاحتمال الشرطي وقانون ثنائي الحد'
+    ] },
+    { id: 'phys', name: 'العلوم الفيزيائية', items: [
+      'التحولات النووية والنشاط الإشعاعي',
+      'التتبع الزمني لتحول كيميائي وسرعة التفاعل',
+      'حاصل التفاعل والتوازن الكيميائي',
+      'تفاعلات حمض–أساس وpH',
+      'المعايرة',
+      'الأسترة والحلمهة',
+      'قوانين نيوتن',
+      'السقوط الشاقولي والمقذوفات',
+      'حركة الكواكب والأقمار (قوانين كبلر)',
+      'ثنائي القطب RC',
+      'ثنائي القطب RL',
+      'الدارة RLC والاهتزازات الحرة',
+      'النواس المرن والجملة المهتزة',
+      'الظواهر الموجية: الأمواج الميكانيكية والضوئية'
+    ] },
+    { id: 'tech', name: 'التكنولوجيا', tech: true },
+    { id: 'arab', name: 'اللغة العربية', items: [
+      'الشعر الإحيائي',
+      'الشعر الرومانسي: الديوان وأبولو والمهجر',
+      'الشعر الحر وشعر التفعيلة',
+      'الشعر الجزائري المعاصر',
+      'القصة القصيرة',
+      'الرواية',
+      'المسرحية',
+      'المقال الأدبي والفكري',
+      'النقد الأدبي الحديث',
+      'البلاغة: التشبيه والاستعارة والكناية',
+      'النحو والصرف والإعراب',
+      'منهجية التعبير: تلخيص النصوص ومناقشتها'
+    ] },
+    { id: 'phil', name: 'الفلسفة', items: [
+      'ما الفلسفة؟ الدهشة والإشكالية',
+      'منهجية المقالة الفلسفية',
+      'اللغة والفكر',
+      'الحرية والمسؤولية',
+      'الأخلاق والقيم',
+      'المعرفة العلمية: التجربة والعقل',
+      'الرياضيات وطبيعة الحقيقة الرياضية',
+      'العدالة والتسامح',
+      'الإنسان والتقنية'
+    ] },
+    { id: 'fr', name: 'اللغة الفرنسية', items: [
+      'Le discours argumentatif : thèse, arguments, exemples',
+      'Les procédés de l’argumentation : explication, démonstration, réfutation',
+      'La modalisation et l’expression de l’opinion',
+      'Les connecteurs logiques : cause, conséquence, but, concession',
+      'L’appel, la lettre ouverte et le slogan',
+      'Le débat d’idées',
+      'Le compte rendu critique',
+      'Le texte littéraire : la nouvelle et le récit',
+      'Le résumé de texte',
+      'Grammaire, conjugaison et orthographe : révision'
+    ] },
+    { id: 'en', name: 'اللغة الإنجليزية', items: [
+      'Reading comprehension and text analysis',
+      'Tenses: present, past and future review',
+      'The passive voice',
+      'Reported speech',
+      'Conditionals and wishes',
+      'Linking words and cohesion',
+      'Word formation and vocabulary',
+      'Writing: paragraphs, essays and argumentation',
+      'Writing: letters, reports and summaries',
+      'Phonetics: stress and intonation'
+    ] },
+    { id: 'hg', name: 'التاريخ والجغرافيا', items: [
+      'تاريخ: الحرب الباردة والتنافس بين القطبين',
+      'تاريخ: حركات التحرر في العالم',
+      'تاريخ: الثورة التحريرية، الأسباب والتنظيم',
+      'تاريخ: الثورة التحريرية، مؤتمر الصومام والتحولات',
+      'تاريخ: الثورة التحريرية، الدبلوماسية والتفاوض والاستقلال',
+      'تاريخ: العالم بعد الحرب الباردة',
+      'جغرافيا: التنظيم الاقتصادي العالمي',
+      'جغرافيا: القوى الاقتصادية الكبرى',
+      'جغرافيا: التكتلات الاقتصادية الجهوية',
+      'جغرافيا: التفاوت بين الشمال والجنوب',
+      'جغرافيا: الجزائر، السكان والتنمية',
+      'جغرافيا: الجزائر والتجارة الخارجية'
+    ] },
+    { id: 'isl', name: 'العلوم الإسلامية', items: [
+      'الوحي: القرآن والسنة',
+      'مقاصد الشريعة',
+      'الاجتهاد والتجديد',
+      'الأسرة: الزواج والطلاق',
+      'المعاملات المالية',
+      'الأخلاق الإسلامية',
+      'القضاء والقدر',
+      'السلم والتسامح وحقوق الإنسان',
+      'الوحدة الإسلامية'
+    ] },
+    { id: 'mathrm', name: 'الرياضيات', items: [
+      'النهايات والاستمرارية',
+      'الاشتقاقية ودراسة الدوال',
+      'الدالة الأسية',
+      'الدالة اللوغاريتمية',
+      'المتتاليات العددية',
+      'الدوال الأصلية والحساب التكاملي',
+      'المعادلات التفاضلية',
+      'الأعداد المركبة: الشكل الجبري والمثلثي',
+      'الأعداد المركبة والتحويلات النقطية',
+      'التشابه المباشر',
+      'الجداء السلمي والهندسة في الفضاء',
+      'القسمة في Z والموافقات',
+      'الأعداد الأولية ومبرهنتا بيزو وغوص',
+      'الاحتمالات: الاحتمال الشرطي وقانون ثنائي الحد'
+    ] },
+    { id: 'mathse', name: 'الرياضيات', items: [
+      'النهايات والاستمرارية',
+      'الاشتقاقية ودراسة الدوال',
+      'المتتاليات العددية',
+      'الدالة الأسية',
+      'الدالة اللوغاريتمية',
+      'الدوال الأصلية والحساب التكاملي',
+      'المعادلات التفاضلية',
+      'الأعداد المركبة',
+      'الجداء السلمي والهندسة في الفضاء',
+      'الاحتمالات: الاحتمال الشرطي وقانون ثنائي الحد'
+    ] },
+    { id: 'svt', name: 'علوم الطبيعة والحياة', items: [
+      'التعبير المورثي: النسخ والترجمة وتركيب البروتين',
+      'بنية البروتين وعلاقتها بوظيفته',
+      'النشاط الإنزيمي',
+      'الاتصال العصبي',
+      'الاتصال الهرموني وتنظيم نسبة السكر',
+      'المناعة: الاستجابة المناعية الخلطية والخلوية',
+      'التنفس والتخمر ودور الميتوكوندري',
+      'البناء الضوئي',
+      'ATP والطاقة الخلوية',
+      'تكتونية الصفائح: الأدلة والحركة',
+      'الظواهر الجيولوجية: البراكين والزلازل والجبال'
+    ] }
+  ];
+
+  var STREAMS = [
+    { id: 'tm', name: 'تقني رياضي', subjects: ['math', 'phys', 'tech', 'arab', 'phil', 'fr', 'en', 'hg', 'isl'] },
+    { id: 'rm', name: 'رياضيات', subjects: ['mathrm', 'phys', 'svt', 'arab', 'phil', 'fr', 'en', 'hg', 'isl'] },
+    { id: 'se', name: 'علوم تجريبية', subjects: ['mathse', 'svt', 'phys', 'arab', 'phil', 'fr', 'en', 'hg', 'isl'] }
+  ];
+
+  var TECH = [
+    { id: 'meca', name: 'هندسة ميكانيكية', items: [
+      'التحليل الوظيفي والبنيوي للأنظمة',
+      'الرسم الصناعي وقراءة الرسومات',
+      'الروابط الميكانيكية والتوجيه',
+      'الستاتيكا: توازن الأجسام',
+      'الكينماتيك',
+      'الديناميك',
+      'مقاومة المواد: الشد والضغط والقص',
+      'مقاومة المواد: الالتواء والانحناء',
+      'نقل الحركة: المسننات والسيور والسلاسل',
+      'التصنيع: الخراطة والتفريز',
+      'المواد وخصائصها',
+      'الأتمتة: GRAFCET والمنطق'
+    ] },
+    { id: 'elec', name: 'هندسة كهربائية', items: [
+      'التحليل الوظيفي والبنيوي للأنظمة',
+      'التيار المتناوب أحادي الطور',
+      'التيار الثلاثي الطور',
+      'المحولات الكهربائية',
+      'الآلات الكهربائية الدوارة',
+      'الإلكترونيك: الثنائي والترانزستور',
+      'المضخم العملياتي',
+      'المنطق التوافقي والتسلسلي',
+      'GRAFCET والأتمتة',
+      'المتحكم المبرمج والأنظمة المبرمجة'
+    ] },
+    { id: 'civil', name: 'هندسة مدنية', items: [
+      'قراءة الرسومات والرسم المعماري',
+      'مواد البناء',
+      'الستاتيكا ومقاومة المواد',
+      'حساب العارضات',
+      'الخرسانة المسلحة: حساب المقاطع',
+      'الأعمدة والبلاطات',
+      'التربة والأساسات',
+      'الطبوغرافيا والقياسات',
+      'دراسة الكميات والأسعار',
+      'تقنيات الإنجاز وتنظيم الورشات'
+    ] },
+    { id: 'proc', name: 'هندسة الطرائق', items: [
+      'التحليل الوظيفي والمخططات الصناعية',
+      'الكيمياء العامة والتحاليل',
+      'ميكانيك الموائع',
+      'انتقال الحرارة والمبادلات الحرارية',
+      'العمليات الوحدوية: التقطير والامتصاص',
+      'الاستخلاص والترشيح',
+      'الموازنة المادية والطاقوية',
+      'المفاعلات الكيميائية',
+      'القياس والتحكم في العمليات',
+      'الأمن الصناعي'
+    ] }
+  ];
+
+  var LS_KEY = 'bac-tm-progress-v1';
+
+  function fresh() { return { done: {}, hidden: [], custom: {}, tech: 'meca', stream: 'tm' }; }
+  var S = fresh();
+  function streamOpt() { return STREAMS.filter(function (x) { return x.id === S.stream; })[0] || STREAMS[0]; }
+  function subjects() {
+    return streamOpt().subjects.map(function (id) {
+      return LIBRARY.filter(function (x) { return x.id === id; })[0];
+    });
+  }
+  var cards = {};
+  var open = { math: true };
+  var editing = false;
+  var confirmReset = false;
+
+  var grid = document.getElementById('grid');
+  var app = document.getElementById('app');
+  var panel = document.getElementById('panel');
+  var elPct = document.getElementById('ov-pct');
+  var elFull = document.getElementById('ov-full');
+  var elSteps = document.getElementById('ov-steps');
+  var elSave = document.getElementById('ov-save');
+
+  function h(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function bits(m) { return (m & 1) + ((m >> 1) & 1) + ((m >> 2) & 1); }
+  function techOpt() { return TECH.filter(function (x) { return x.id === S.tech; })[0] || TECH[0]; }
+  function keyOf(s) { return s.tech ? 'tech-' + S.tech : s.id; }
+
+  function sanitize(o) {
+    var s = fresh();
+    if (!o || typeof o !== 'object') return s;
+    if (o.done && typeof o.done === 'object') {
+      Object.keys(o.done).forEach(function (k) {
+        var v = o.done[k];
+        if (Number.isInteger(v) && v > 0 && v < 8) s.done[k] = v;
+      });
+    }
+    if (Array.isArray(o.hidden)) {
+      s.hidden = o.hidden.filter(function (x) { return typeof x === 'string'; }).slice(0, 400);
+    }
+    if (o.custom && typeof o.custom === 'object') {
+      Object.keys(o.custom).forEach(function (k) {
+        if (!Array.isArray(o.custom[k])) return;
+        s.custom[k] = o.custom[k].filter(function (c) {
+          return c && typeof c.id === 'string' && typeof c.t === 'string';
+        }).slice(0, 60).map(function (c) { return { id: c.id, t: c.t.slice(0, 120) }; });
+      });
+    }
+    if (TECH.some(function (x) { return x.id === o.tech; })) s.tech = o.tech;
+    if (STREAMS.some(function (x) { return x.id === o.stream; })) s.stream = o.stream;
+    return s;
+  }
+
+  function items(s) {
+    var k = keyOf(s);
+    var base = s.tech ? techOpt().items : s.items;
+    var out = [];
+    base.forEach(function (t, i) {
+      var id = k + '-' + (i < 9 ? '0' : '') + (i + 1);
+      if (S.hidden.indexOf(id) === -1) out.push({ id: id, t: t, custom: false });
+    });
+    (S.custom[k] || []).forEach(function (c) { out.push({ id: c.id, t: c.t, custom: true }); });
+    return out;
+  }
+
+  function stat(s) {
+    var it = items(s), steps = 0, full = 0;
+    it.forEach(function (l) {
+      var m = S.done[l.id] || 0;
+      steps += bits(m);
+      if (m === 7) full++;
+    });
+    return { n: it.length, steps: steps, full: full, pct: it.length ? Math.round(steps * 100 / (it.length * 3)) : 0 };
+  }
+
+  function makeDim() {
+    var el = h('span', 'dim');
+    el.append(h('span', 'fill'), h('i'));
+    return { el: el, set: function (p) { el.style.setProperty('--p', p + '%'); } };
+  }
+  var ovDim = makeDim();
+  document.getElementById('ov-dim').append(ovDim.el);
+
+  function refresh() {
+    var n = 0, steps = 0, full = 0;
+    subjects().forEach(function (s) {
+      var st = stat(s);
+      n += st.n; steps += st.steps; full += st.full;
+      var c = cards[s.id];
+      if (c) {
+        c.pct.textContent = st.pct + '%';
+        c.sub.textContent = 'الدروس المكتملة: ' + st.full + ' من ' + st.n;
+        c.dim.set(st.pct);
+      }
+    });
+    var p = n ? Math.round(steps * 100 / (n * 3)) : 0;
+    elPct.textContent = p + '%';
+    elFull.textContent = full + '/' + n;
+    elSteps.textContent = steps + '/' + (n * 3);
+    ovDim.set(p);
+  }
+
+  /* ---------- saving ---------- */
+  var ref = null, ver = 0, savedVer = 0, saving = false, timer = null;
+
+  function setStatus(t) { elSave.textContent = t; }
+  function storeLocal() { try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {} }
+  function idleStatus() { return ref ? 'محفوظ في حسابك' : 'محفوظ في هذا المتصفح'; }
+
+  function queue() {
+    ver++;
+    storeLocal();
+    setStatus('جارٍ الحفظ…');
+    clearTimeout(timer);
+    timer = setTimeout(flush, 600);
+  }
+  function flush() {
+    if (saving) return;
+    if (!ref) { savedVer = ver; setStatus(idleStatus()); return; }
+    saving = true;
+    var v = ver;
+    var snapshot = JSON.parse(JSON.stringify(S));
+    ref.set(snapshot).then(function () {
+      saving = false;
+      savedVer = v;
+      if (ver !== savedVer) flush(); else setStatus(idleStatus());
+    }, function (e) {
+      saving = false;
+      if (e && e.code === 'invalid_argument') {
+        /* this viewer may not write to the account store: keep progress in this browser */
+        ref = null;
+        savedVer = ver;
+        setStatus(idleStatus());
+      } else {
+        setStatus('تعذر الحفظ، جرّب تأشيرة أخرى');
+      }
+    });
+  }
+  function hasProgress() {
+    return Object.keys(S.done).length || S.hidden.length || Object.keys(S.custom).length;
+  }
+
+  /* ---------- rendering ---------- */
+  function setOpen(id, on) {
+    open[id] = on;
+    var c = cards[id];
+    if (!c) return;
+    c.head.setAttribute('aria-expanded', String(on));
+    c.body.hidden = !on;
+  }
+
+  function buildRow(s, l) {
+    var r = h('li', 'row');
+    var m = S.done[l.id] || 0;
+    var t = h('span', 't', l.t);
+    t.dir = 'auto';
+    var steps = h('span', 'steps');
+    STEPS.forEach(function (label, i) {
+      var b = h('button', 'chk');
+      b.type = 'button';
+      b.setAttribute('role', 'checkbox');
+      b.setAttribute('aria-checked', String(!!(m & (1 << i))));
+      b.setAttribute('aria-label', label + ': ' + l.t);
+      b.addEventListener('click', function () {
+        var cur = S.done[l.id] || 0;
+        var nxt = cur ^ (1 << i);
+        if (nxt) S.done[l.id] = nxt; else delete S.done[l.id];
+        b.setAttribute('aria-checked', String(!!(nxt & (1 << i))));
+        r.classList.toggle('full', nxt === 7);
+        refresh();
+        queue();
+      });
+      steps.append(b);
+    });
+    var rm = h('button', 'rm', '×');
+    rm.type = 'button';
+    rm.setAttribute('aria-label', 'حذف: ' + l.t);
+    rm.addEventListener('click', function () {
+      var k = keyOf(s);
+      if (l.custom) {
+        S.custom[k] = (S.custom[k] || []).filter(function (c) { return c.id !== l.id; });
+      } else if (S.hidden.indexOf(l.id) === -1) {
+        S.hidden.push(l.id);
+      }
+      delete S.done[l.id];
+      renderCard(s);
+      refresh();
+      renderPanel();
+      queue();
+    });
+    r.classList.toggle('full', m === 7);
+    r.append(t, steps, rm);
+    return r;
+  }
+
+  function renderCard(s) {
+    var el = h('section', 'card');
+    var bodyId = 'body-' + s.id;
+
+    var head = h('button', 'head');
+    head.type = 'button';
+    head.setAttribute('aria-controls', bodyId);
+    head.setAttribute('aria-expanded', String(!!open[s.id]));
+    var name = h('span', 'name', s.name);
+    var pct = h('span', 'pct num', '0%');
+    var sub = h('span', 'sub', '');
+    var dim = makeDim();
+    head.append(name, pct, sub, dim.el);
+
+    var body = h('div', 'body');
+    body.id = bodyId;
+    body.hidden = !open[s.id];
+
+    if (s.tech) {
+      var seg = h('div', 'seg');
+      seg.setAttribute('role', 'radiogroup');
+      seg.setAttribute('aria-label', 'التخصص');
+      TECH.forEach(function (o) {
+        var b = h('button', null, o.name);
+        b.type = 'button';
+        b.setAttribute('role', 'radio');
+        b.setAttribute('aria-checked', String(o.id === S.tech));
+        b.addEventListener('click', function () {
+          if (S.tech === o.id) return;
+          S.tech = o.id;
+          renderCard(s);
+          refresh();
+          queue();
+        });
+        seg.append(b);
+      });
+      body.append(seg, h('p', 'hint', 'الدروس تقريبية في هذا الجزء، عدّلها حسب برنامج تخصصك.'));
+    }
+
+    var cols = h('div', 'cols');
+    STEPS.forEach(function (x) { cols.append(h('span', null, x)); });
+    var list = h('ul', 'list');
+    items(s).forEach(function (l) { list.append(buildRow(s, l)); });
+
+    var form = h('form', 'add');
+    var inp = h('input');
+    inp.type = 'text';
+    inp.id = 'add-' + s.id;
+    inp.maxLength = 120;
+    inp.placeholder = 'أضف درسًا إلى هذه المادة';
+    inp.setAttribute('aria-label', 'درس جديد في ' + s.name);
+    var sb = h('button', 'btn', 'إضافة');
+    sb.type = 'submit';
+    form.append(inp, sb);
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var t = inp.value.trim();
+      var k = keyOf(s);
+      if (!t) return;
+      if ((S.custom[k] || []).length >= 60) return;
+      (S.custom[k] = S.custom[k] || []).push({
+        id: k + '-c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+        t: t.slice(0, 120)
+      });
+      renderCard(s);
+      refresh();
+      queue();
+      var again = document.getElementById('add-' + s.id);
+      if (again) again.focus();
+    });
+
+    body.append(cols, list, form);
+    el.append(head, body);
+
+    head.addEventListener('click', function () { setOpen(s.id, body.hidden); });
+
+    var rec = { el: el, head: head, body: body, pct: pct, sub: sub, dim: dim };
+    if (cards[s.id]) cards[s.id].el.replaceWith(el); else grid.append(el);
+    cards[s.id] = rec;
+  }
+
+  function renderStreams() {
+    var box = document.getElementById('streams');
+    box.replaceChildren();
+    STREAMS.forEach(function (o) {
+      var b = h('button', null, o.name);
+      b.type = 'button';
+      b.setAttribute('role', 'radio');
+      b.setAttribute('aria-checked', String(o.id === S.stream));
+      b.addEventListener('click', function () {
+        if (S.stream === o.id) return;
+        S.stream = o.id;
+        buildAll();
+        queue();
+      });
+      box.append(b);
+    });
+    document.getElementById('eyebrow').textContent = streamOpt().name + ' · بكالوريا 2027';
+  }
+
+  function buildAll() {
+    var list = subjects();
+    if (!list.some(function (s) { return open[s.id]; })) open[list[0].id] = true;
+    renderStreams();
+    grid.replaceChildren();
+    cards = {};
+    list.forEach(renderCard);
+    refresh();
+    renderPanel();
+  }
+
+  function renderPanel() {
+    panel.replaceChildren();
+    panel.append(h('p', null, 'احذف دروسًا ما عندك فيها أو أضف دروسك من أسفل كل مادة. حذف درس يمسح تأشيراته.'));
+    if (S.hidden.length) {
+      var rs = h('button', 'btn', 'استرجاع المحذوف (' + S.hidden.length + ')');
+      rs.type = 'button';
+      rs.addEventListener('click', function () {
+        S.hidden = [];
+        buildAll();
+        queue();
+      });
+      panel.append(rs);
+    }
+    if (!confirmReset) {
+      var rz = h('button', 'btn danger', 'تصفير كل التقدم');
+      rz.type = 'button';
+      rz.addEventListener('click', function () { confirmReset = true; renderPanel(); });
+      panel.append(rz);
+    } else {
+      var yes = h('button', 'btn danger', 'نعم، صفّر التقدم');
+      yes.type = 'button';
+      yes.addEventListener('click', function () {
+        S.done = {};
+        confirmReset = false;
+        buildAll();
+        queue();
+      });
+      var no = h('button', 'btn', 'تراجع');
+      no.type = 'button';
+      no.addEventListener('click', function () { confirmReset = false; renderPanel(); });
+      panel.append(yes, no);
+    }
+  }
+
+  /* ---------- toolbar ---------- */
+  document.getElementById('b-open').addEventListener('click', function () {
+    subjects().forEach(function (s) { setOpen(s.id, true); });
+  });
+  document.getElementById('b-close').addEventListener('click', function () {
+    subjects().forEach(function (s) { setOpen(s.id, false); });
+  });
+  var bEdit = document.getElementById('b-edit');
+  bEdit.addEventListener('click', function () {
+    editing = !editing;
+    confirmReset = false;
+    app.classList.toggle('editing', editing);
+    bEdit.setAttribute('aria-pressed', String(editing));
+    bEdit.textContent = editing ? 'إنهاء التعديل' : 'تعديل القائمة';
+    panel.hidden = !editing;
+    renderPanel();
+    if (editing) subjects().forEach(function (s) { setOpen(s.id, true); });
+  });
+
+  /* ---------- start ---------- */
+  try {
+    var raw = localStorage.getItem(LS_KEY);
+    if (raw) S = sanitize(JSON.parse(raw));
+  } catch (e) {}
+  buildAll();
+
+  (async function connect() {
+    var c = window.claude;
+    if (!c || !c.use) return;
+    var db = null, user = null, id = null;
+    try {
+      db = await c.use('db');
+      user = await c.use('user');
+      id = user ? await user.id() : null;
+    } catch (e) {}
+    if (!db || !id) return;
+    try {
+      ref = db.doc('data/users/' + id + '/progress');
+      ref.onSnapshot(function (snap) {
+        if (ver !== savedVer || saving || snap.metadata.hasPendingWrites) return;
+        if (snap.exists) {
+          S = sanitize(snap.data());
+          storeLocal();
+          buildAll();
+        } else if (hasProgress()) {
+          queue();
+        }
+        setStatus(idleStatus());
+      }, function () {
+        ref = null;
+        setStatus(idleStatus());
+      });
+      setStatus(idleStatus());
+    } catch (e) {
+      ref = null;
+      setStatus(idleStatus());
+    }
+  })();
+})();
+</script>
+
+</body></html>
